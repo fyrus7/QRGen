@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<!-- ✅ Header logo -->
+<!-- ✅ Logo Header -->
 <div style="text-align: center;">
   <img 
     src="https://app.iamfyrus.com/media/Bajak2025.png" 
@@ -25,7 +25,6 @@
     style="width: 250px; height: auto;"
   >
 </div>
-
 
 <div class="container text-center">
   <div class="row justify-content-center">
@@ -59,7 +58,6 @@
         <button class="btn btn-success" onclick="downloadQR()">DOWNLOAD QR</button>
         <button class="btn btn-secondary" data-bs-dismiss="modal">DONE</button>
       </div>
-
     </div>
   </div>
 </div>
@@ -70,7 +68,6 @@
 
 <script>
   let currentQRText = "";
-
   const logoURL = "https://transfer.lariansawahpadi.com/stripe.jpg";
 
   function showQR() {
@@ -80,23 +77,27 @@
     currentQRText = input;
     const canvas = document.getElementById("qrCanvas");
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const logoImg = new Image();
     logoImg.crossOrigin = "anonymous";
     logoImg.onload = () => {
       const logoWidth = 300;
       const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
-
-      // Resize canvas for logo + QR + text
       const qrHeight = 300;
       const textHeight = 40;
+
+      canvas.width = 300;
       canvas.height = logoHeight + qrHeight + textHeight;
 
-      // Draw logo (top)
+      // ✅ Latar belakang putih
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Lukis logo
       ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
 
-      // Generate QR
+      // QR ke canvas sementara
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = 300;
       tempCanvas.height = 300;
@@ -107,16 +108,18 @@
           return;
         }
 
-        // Draw QR below logo
+        // Lukis QR
         ctx.drawImage(tempCanvas, 0, logoHeight);
 
-        // Draw footer text
+        // Lukis teks
         ctx.font = "bold 14px Arial";
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
         ctx.fillText("tunjukkan QR kepada crew bertugas", canvas.width / 2, logoHeight + qrHeight + 30);
 
+        // Tunjuk input bawah QR
         document.getElementById("qrText").textContent = input;
+
         const modal = new bootstrap.Modal(document.getElementById("qrModal"));
         modal.show();
       });
@@ -127,35 +130,23 @@
   function downloadQR() {
     const canvas = document.getElementById("qrCanvas");
     const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/jpeg", 0.95); // 0.95 = quality (0 to 1)
-    link.download = `QR_${currentQRText.replace(/[^a-zA-Z0-9]/g, "_")}.jpg`;
+    link.href = canvas.toDataURL("image/png"); // ✅ Format PNG
+    link.download = `QR_${currentQRText.replace(/[^a-zA-Z0-9]/g, "_")}.png`;
     link.click();
   }
 
-  // Input filter: hanya nombor dan koma
+  // Filter input: nombor + koma sahaja
   const numberInput = document.getElementById("numberInput");
   numberInput.addEventListener("input", function () {
-  let val = this.value;
+    let val = this.value;
+    val = val.replace(/[^0-9, ]/g, "");             // Hanya nombor, koma dan ruang
+    val = val.replace(/,([^\s])/g, ", $1");          // Auto tambah ruang lepas koma
+    val = val.replace(/, +/g, ", ");                 // Bersih ruang berlebihan
+    val = val.replace(/^, ?/, "");                   // Buang koma di awal
+    this.value = val;
+  });
 
-  // Benarkan hanya nombor dan koma + ruang
-  val = val.replace(/[^0-9, ]/g, "");
-
-  // Auto tambah satu ruang selepas koma jika belum ada
-  val = val.replace(/,([^\s])/g, ", $1");
-
-  // Hapus ruang berlebihan selepas koma
-  val = val.replace(/, +/g, ", ");
-
-  // Buang koma atau koma+ruang di awal
-  val = val.replace(/^, ?/, "");
-
-  // Tetapkan balik nilai
-  this.value = val;
-});
-
-
-
-  // Kosongkan input bila modal tutup
+  // Kosong input bila modal tutup
   document.getElementById("qrModal").addEventListener("hidden.bs.modal", function () {
     document.getElementById("numberInput").value = "";
   });
