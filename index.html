@@ -127,8 +127,8 @@
   function downloadQR() {
     const canvas = document.getElementById("qrCanvas");
     const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = `QR_${currentQRText.replace(/[^a-zA-Z0-9]/g, "_")}.png`;
+    link.href = canvas.toDataURL("image/jpeg", 0.95); // 0.95 = quality (0 to 1)
+    link.download = `QR_${currentQRText.replace(/[^a-zA-Z0-9]/g, "_")}.jpg`;
     link.click();
   }
 
