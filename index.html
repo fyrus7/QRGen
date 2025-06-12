@@ -8,17 +8,27 @@
   <style>
     body {
       background-color: #f8f9fa;
-      padding-top: 50px;
+      padding-top: 30px;
     }
     #qrText {
       word-break: break-word;
+    }
+    #headerLogo {
+      max-height: 70px;
+      margin-bottom: 20px;
+      object-fit: contain;
     }
   </style>
 </head>
 <body>
 
+<!-- ✅ Header logo -->
 <div class="container text-center">
+  <img id="headerLogo" src="https://transfer.lariansawahpadi.com/stripe.jpg" alt="Header Logo">
   <h2 class="mb-4">QR Generator</h2>
+</div>
+
+<div class="container text-center">
   <div class="row justify-content-center">
     <div class="col-md-6">
       <input 
@@ -72,16 +82,13 @@
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Load logo
     const logoImg = new Image();
     logoImg.crossOrigin = "anonymous";
     logoImg.onload = () => {
       const logoWidth = 300;
       const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
-      ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
 
-
-      // Set canvas height to fit logo + QR + text
+      // Resize canvas for logo + QR + text
       const qrHeight = 300;
       const textHeight = 40;
       canvas.height = logoHeight + qrHeight + textHeight;
@@ -89,7 +96,7 @@
       // Draw logo (top)
       ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
 
-      // Temp QR
+      // Generate QR
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = 300;
       tempCanvas.height = 300;
@@ -103,19 +110,17 @@
         // Draw QR below logo
         ctx.drawImage(tempCanvas, 0, logoHeight);
 
-        // Draw text at bottom
+        // Draw footer text
         ctx.font = "bold 14px Arial";
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
         ctx.fillText("tunjukkan QR kepada crew bertugas", canvas.width / 2, logoHeight + qrHeight + 30);
 
         document.getElementById("qrText").textContent = input;
-
         const modal = new bootstrap.Modal(document.getElementById("qrModal"));
         modal.show();
       });
     };
-
     logoImg.src = logoURL;
   }
 
@@ -127,26 +132,29 @@
     link.click();
   }
 
-  // Input: hanya nombor dan koma, auto-tambah ruang selepas koma
+  // Input filter: hanya nombor dan koma
   const numberInput = document.getElementById("numberInput");
   numberInput.addEventListener("input", function () {
-    const pos = this.selectionStart;
-    const before = this.value;
-    let cleaned = before.replace(/[^0-9,]/g, "");  // hanya nombor dan koma
-    cleaned = cleaned.replace(/,\s*/g, ", ");      // tukar ke ", "
+    const input = this;
+    const original = input.value;
+    const caretPos = input.selectionStart;
 
-    if (cleaned !== before) {
-      this.value = cleaned;
-      this.setSelectionRange(pos, pos);
+    let cleaned = original.replace(/[^0-9,]/g, "");
+    cleaned = cleaned.replace(/,+\s*/g, ", "); // satu ruang selepas koma
+
+    if (cleaned !== original) {
+      const diff = cleaned.length - original.length;
+      input.value = cleaned;
+      const newCaret = Math.max(0, caretPos + diff);
+      input.setSelectionRange(newCaret, newCaret);
     }
   });
 
-  // Bila modal ditutup, kosongkan input
+  // Kosongkan input bila modal tutup
   document.getElementById("qrModal").addEventListener("hidden.bs.modal", function () {
     document.getElementById("numberInput").value = "";
   });
 </script>
-
 
 </body>
 </html>
