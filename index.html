@@ -24,7 +24,11 @@
 
 <!-- ✅ Header logo -->
 <div class="container text-center">
-  <img id="headerLogo" src="https://transfer.lariansawahpadi.com/stripe.jpg" alt="Header Logo">
+  <div class="row justify-content-center mb-3">
+    <div class="col-md-6">
+      <img id="headerLogo" src="https://transfer.lariansawahpadi.com/stripe.jpg" alt="Header Logo" class="img-fluid w-100 mb-3" style="max-height: 70px; object-fit: contain;">
+    </div>
+  </div>
   <h2 class="mb-4">QR Generator</h2>
 </div>
 
@@ -135,20 +139,28 @@
   // Input filter: hanya nombor dan koma
   const numberInput = document.getElementById("numberInput");
   numberInput.addEventListener("input", function () {
-    const input = this;
-    const original = input.value;
-    const caretPos = input.selectionStart;
+  let val = this.value;
 
-    let cleaned = original.replace(/[^0-9,]/g, "");
-    cleaned = cleaned.replace(/,+\s*/g, ", "); // satu ruang selepas koma
+  // Buang semua karakter kecuali nombor dan koma
+  val = val.replace(/[^0-9,]/g, "");
 
-    if (cleaned !== original) {
-      const diff = cleaned.length - original.length;
-      input.value = cleaned;
-      const newCaret = Math.max(0, caretPos + diff);
-      input.setSelectionRange(newCaret, newCaret);
-    }
-  });
+  // Tukar semua koma berturut kepada satu koma + satu ruang
+  val = val.replace(/,+\s*/g, ", ");
+
+  // Elak koma di awal
+  val = val.replace(/^,\s*/, "");
+
+  // Elak koma di hujung
+  val = val.replace(/,\s*$/, ",");
+
+  // Tetapkan balik nilai tanpa ganggu kursor
+  if (this.value !== val) {
+    const pos = this.selectionStart;
+    this.value = val;
+    this.setSelectionRange(pos, pos);
+  }
+});
+
 
   // Kosongkan input bila modal tutup
   document.getElementById("qrModal").addEventListener("hidden.bs.modal", function () {
