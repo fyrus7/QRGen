@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f2f2f2;
+    }
+    input {
+      width: 300px;
+      padding: 10px;
+      font-size: 1.1em;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.1em;
+      margin: 10px 5px;
+      cursor: pointer;
+    }
+    #qrModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #qrContent {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 90%;
+    }
+    #qrText {
+      margin-top: 10px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+    .qrButtons {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>QR Generator</h2>
+  <input type="text" id="numberInput" placeholder="Contoh: 1234,5678,9012"/>
+  <button onclick="showQR()">SHOW QR</button>
+
+  <div id="qrModal">
+    <div id="qrContent">
+      <canvas id="qrCanvas"></canvas>
+      <p id="qrText"></p>
+      <div class="qrButtons">
+        <button onclick="downloadQR()">DOWNLOAD QR</button>
+        <button onclick="closeModal()">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code generator library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <script>
+    let currentQRText = "";
+
+    function showQR() {
+      const input = document.getElementById("numberInput").value.trim();
+      if (input === "") return;
+
+      currentQRText = input;
+      const canvas = document.getElementById("qrCanvas");
+      const qrText = document.getElementById("qrText");
+
+      QRCode.toCanvas(canvas, input, { width: 200 }, function (error) {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        qrText.textContent = input;
+        document.getElementById("qrModal").style.display = "flex";
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.getElementById("qrCanvas");
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = `QR_${currentQRText.replace(/[^a-zA-Z0-9]/g, "_")}.png`;
+      link.click();
+    }
+
+    function closeModal() {
+      document.getElementById("qrModal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
