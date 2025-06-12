@@ -61,7 +61,6 @@
 <script>
   let currentQRText = "";
 
-  // Ganti URL logo anda di sini:
   const logoURL = "https://transfer.lariansawahpadi.com/stripe.jpg";
 
   function showQR() {
@@ -73,14 +72,25 @@
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Load logo image
+    // Load logo
     const logoImg = new Image();
     logoImg.crossOrigin = "anonymous";
     logoImg.onload = () => {
-      // Draw logo at top
-      ctx.drawImage(logoImg, 0, 0, canvas.width, 60);
+      const logoWidth = canvas.width * 0.8;
+      const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
+      const logoX = (canvas.width - logoWidth) / 2; // center position
+      ctx.drawImage(logoImg, logoX, 0, logoWidth, logoHeight);
 
-      // Create temp QR canvas
+
+      // Set canvas height to fit logo + QR + text
+      const qrHeight = 300;
+      const textHeight = 40;
+      canvas.height = logoHeight + qrHeight + textHeight;
+
+      // Draw logo (top)
+      ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
+
+      // Temp QR
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = 300;
       tempCanvas.height = 300;
@@ -92,15 +102,14 @@
         }
 
         // Draw QR below logo
-        ctx.drawImage(tempCanvas, 0, 40);
+        ctx.drawImage(tempCanvas, 0, logoHeight);
 
         // Draw text at bottom
         ctx.font = "bold 14px Arial";
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
-        ctx.fillText("tunjukkan QR kepada crew bertugas", canvas.width / 2, 385);
+        ctx.fillText("tunjukkan QR kepada crew bertugas", canvas.width / 2, logoHeight + qrHeight + 30);
 
-        // Show QR text
         document.getElementById("qrText").textContent = input;
 
         const modal = new bootstrap.Modal(document.getElementById("qrModal"));
@@ -119,27 +128,26 @@
     link.click();
   }
 
-  // Input: hanya nombor dan koma, tambah ruang lepas koma
+  // Input: hanya nombor dan koma, auto-tambah ruang selepas koma
+  const numberInput = document.getElementById("numberInput");
   numberInput.addEventListener("input", function () {
-  let pos = this.selectionStart;
-  let before = this.value;
-  let cleaned = before.replace(/[^0-9,]/g, "");  // Hanya nombor dan koma
-  cleaned = cleaned.replace(/,\s*/g, ", ");      // Tukar semua koma ke ", " satu ruang
+    const pos = this.selectionStart;
+    const before = this.value;
+    let cleaned = before.replace(/[^0-9,]/g, "");  // hanya nombor dan koma
+    cleaned = cleaned.replace(/,\s*/g, ", ");      // tukar ke ", "
 
-  // Elak ganggu posisi kursor semasa user padam/backspace
-  if (cleaned !== before) {
-    this.value = cleaned;
-    this.setSelectionRange(pos, pos);
-  }
-});
-
-
-  // Bila modal ditutup, clear input
-  document.getElementById('qrModal').addEventListener('hidden.bs.modal', function () {
-    document.getElementById('numberInput').value = "";
+    if (cleaned !== before) {
+      this.value = cleaned;
+      this.setSelectionRange(pos, pos);
+    }
   });
 
+  // Bila modal ditutup, kosongkan input
+  document.getElementById("qrModal").addEventListener("hidden.bs.modal", function () {
+    document.getElementById("numberInput").value = "";
+  });
 </script>
+
 
 </body>
 </html>
