@@ -76,10 +76,9 @@
     const logoImg = new Image();
     logoImg.crossOrigin = "anonymous";
     logoImg.onload = () => {
-      const logoWidth = canvas.width * 0.8;
+      const logoWidth = 300;
       const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
-      const logoX = (canvas.width - logoWidth) / 2; // center position
-      ctx.drawImage(logoImg, logoX, 0, logoWidth, logoHeight);
+      ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
 
 
       // Set canvas height to fit logo + QR + text
