@@ -141,25 +141,22 @@
   numberInput.addEventListener("input", function () {
   let val = this.value;
 
-  // Buang semua karakter kecuali nombor dan koma
-  val = val.replace(/[^0-9,]/g, "");
+  // Benarkan hanya nombor dan koma + ruang
+  val = val.replace(/[^0-9, ]/g, "");
 
-  // Tukar semua koma berturut kepada satu koma + satu ruang
-  val = val.replace(/,+\s*/g, ", ");
+  // Auto tambah satu ruang selepas koma jika belum ada
+  val = val.replace(/,([^\s])/g, ", $1");
 
-  // Elak koma di awal
-  val = val.replace(/^,\s*/, "");
+  // Hapus ruang berlebihan selepas koma
+  val = val.replace(/, +/g, ", ");
 
-  // Elak koma di hujung
-  val = val.replace(/,\s*$/, ",");
+  // Buang koma atau koma+ruang di awal
+  val = val.replace(/^, ?/, "");
 
-  // Tetapkan balik nilai tanpa ganggu kursor
-  if (this.value !== val) {
-    const pos = this.selectionStart;
-    this.value = val;
-    this.setSelectionRange(pos, pos);
-  }
+  // Tetapkan balik nilai
+  this.value = val;
 });
+
 
 
   // Kosongkan input bila modal tutup
