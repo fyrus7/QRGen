@@ -146,7 +146,7 @@
   const numberInput = document.getElementById("numberInput");
   numberInput.addEventListener("input", function () {
     let val = this.value;
-    val = val.replace(/[^0-9, ]/g, "");             // Hanya nombor, koma dan ruang
+    val = val.replace(/[^0-9,\-\/ ]/g, "");          // ✅ Benarkan nombor, koma, dash, slash, ruang
     val = val.replace(/,([^\s])/g, ", $1");          // Auto tambah ruang lepas koma
     val = val.replace(/, +/g, ", ");                 // Bersih ruang berlebihan
     val = val.replace(/^, ?/, "");                   // Buang koma di awal
