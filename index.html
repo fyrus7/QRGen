@@ -26,9 +26,11 @@
   >
 </div>
   <br>
+  <center>
   key in your IC/ID and click show QR.
-  (add comma for multi IC/ID)
   <br>
+  (add comma for multi IC/ID)
+  <br><br></center>
 
 <div class="container text-center">
   <div class="row justify-content-center">
@@ -120,6 +122,7 @@
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
         ctx.fillText("tunjukkan QR kepada crew bertugas", canvas.width / 2, logoHeight + qrHeight + 30);
+        ctx.fillText("show this QR to our crew", canvas.width / 2, logoHeight + qrHeight + 30);
 
         // Tunjuk input bawah QR
         document.getElementById("qrText").textContent = input;
