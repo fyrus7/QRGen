@@ -25,12 +25,13 @@
     style="width: 350px; height: auto;"
   >
 </div>
-  <br>
-  <center>
+<br>
+<center>
   key in your IC/ID and click show QR.
   <br>
   (add comma for multiple IC/ID)
-  <br><br></center>
+  <br><br>
+</center>
 
 <div class="container text-center">
   <div class="row justify-content-center">
@@ -38,12 +39,11 @@
       <input 
         type="text" 
         id="numberInput" 
-        class="form-control mb-3" 
+        class="form-control mb-2" 
         placeholder="key in your IC/ID"
-        inputmode="numeric"
-        pattern="[0-9, ]*"
       >
-      <button class="btn btn-primary w-100" onclick="showQR()">SHOW QR</button>
+      <small class="text-muted">You may enter anything (letters, symbols, multiple IDs separated by commas)</small>
+      <button class="btn btn-primary w-100 mt-3" onclick="showQR()">SHOW QR</button>
     </div>
   </div>
 </div>
@@ -140,17 +140,6 @@
     link.download = `QR_${currentQRText.replace(/[^a-zA-Z0-9]/g, "_")}.png`;
     link.click();
   }
-
-  // Filter input: nombor + koma sahaja
-  const numberInput = document.getElementById("numberInput");
-  numberInput.addEventListener("input", function () {
-    let val = this.value;
-    val = val.replace(/[^0-9,\-\/ ]/g, "");          // ✅ Benarkan nombor, koma, dash, slash, ruang
-    val = val.replace(/,([^\s])/g, ", $1");          // Auto tambah ruang lepas koma
-    val = val.replace(/, +/g, ", ");                 // Bersih ruang berlebihan
-    val = val.replace(/^, ?/, "");                   // Buang koma di awal
-    this.value = val;
-  });
 
   // Kosong input bila modal tutup
   document.getElementById("qrModal").addEventListener("hidden.bs.modal", function () {
