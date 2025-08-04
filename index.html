@@ -99,37 +99,40 @@
   const logoURL = "https://app.iamfyrus.com/media/qrgen.png";
   const scriptURL = "https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec";
 
-  async function searchData() {
-    const input = document.getElementById("numberInput").value.trim();
-    const resultA = document.getElementById("searchResultA");
-    const resultBoxWrapper = document.getElementById("resultBoxWrapper");
-    const generateQRBtn = document.getElementById("generateQRBtn");
+async function searchData() {
+  const input = document.getElementById("numberInput").value.trim();
+  const resultA = document.getElementById("searchResultA");
+  const resultBoxWrapper = document.getElementById("resultBoxWrapper");
+  const generateQRBtn = document.getElementById("generateQRBtn");
 
-    if (input === "") return;
+  if (input === "") return;
 
-    resultBoxWrapper.style.display = "none";
-    generateQRBtn.style.display = "none";
-    resultA.textContent = "Loading...";
-    resultBoxWrapper.style.display = "flex";
+  resultBoxWrapper.style.display = "none";
+  generateQRBtn.style.display = "none";
+  resultA.textContent = "Loading...";
 
-    try {
-      const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
-      const data = await response.json();
+  try {
+    const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
+    const data = await response.json();
 
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
-        resultA.textContent = lines.join('\n');
-        generateQRBtn.style.display = "inline-block";
-      } else {
-        resultA.textContent = "No data found.";
-      }
-    } catch (error) {
-      resultA.textContent = "Error fetching data.";
-      console.error("Fetch error:", error);
+    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+      const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
+      resultA.textContent = lines.join('\n');
+
+      resultBoxWrapper.style.display = "flex";        // ✅ Papar result
+      generateQRBtn.style.display = "inline-block";   // ✅ Hanya tunjuk kalau ada data
+    } else {
+      resultA.textContent = "No data found.";
+      generateQRBtn.style.display = "none";           // 🔴 Pastikan butang QR tetap sembunyi
     }
-
-    currentQRText = input;
+  } catch (error) {
+    resultA.textContent = "Error fetching data.";
+    console.error("Fetch error:", error);
+    generateQRBtn.style.display = "none";             // 🔴 Juga sembunyi jika error
   }
+
+  currentQRText = input;
+}
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
