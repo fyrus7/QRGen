@@ -107,10 +107,10 @@ async function searchData() {
 
   if (input === "") return;
 
+  // ✅ Tunjuk "Loading..."
   resultBoxWrapper.style.display = "flex";
   resultA.textContent = "Loading...";
-  generateQRBtn.style.display = "none"; // ❌ Sembunyi button QR dulu
-  currentQRText = ""; // ❌ Reset QR text awal-awal
+  generateQRBtn.style.display = "none";
 
   try {
     const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
@@ -120,8 +120,8 @@ async function searchData() {
       const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
       resultA.textContent = lines.join('\n');
 
-      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya bila ada data
-      currentQRText = input; // ✅ Simpan text QR hanya bila valid
+      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya kalau ada data
+      currentQRText = input; // ✅ Simpan QR text hanya kalau ada result
     } else {
       resultA.textContent = "No data found.";
     }
@@ -130,6 +130,7 @@ async function searchData() {
     console.error("Fetch error:", error);
   }
 }
+
 
 
   function showQR() {
