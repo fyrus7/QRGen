@@ -107,10 +107,10 @@ async function searchData() {
 
   if (input === "") return;
 
-  // ✅ Tunjukkan kotak dulu untuk paparkan "Loading..."
   resultBoxWrapper.style.display = "flex";
   resultA.textContent = "Loading...";
-  generateQRBtn.style.display = "none";
+  generateQRBtn.style.display = "none"; // ❌ Sembunyi button QR dulu
+  currentQRText = ""; // ❌ Reset QR text awal-awal
 
   try {
     const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
@@ -120,7 +120,8 @@ async function searchData() {
       const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
       resultA.textContent = lines.join('\n');
 
-      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya kalau ada data
+      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya bila ada data
+      currentQRText = input; // ✅ Simpan text QR hanya bila valid
     } else {
       resultA.textContent = "No data found.";
     }
@@ -128,9 +129,8 @@ async function searchData() {
     resultA.textContent = "Error fetching data.";
     console.error("Fetch error:", error);
   }
-
-  currentQRText = input;
 }
+
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
