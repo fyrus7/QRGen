@@ -107,9 +107,10 @@ async function searchData() {
 
   if (input === "") return;
 
-  resultBoxWrapper.style.display = "none";
-  generateQRBtn.style.display = "none";
+  // ✅ Tunjukkan kotak dulu untuk paparkan "Loading..."
+  resultBoxWrapper.style.display = "flex";
   resultA.textContent = "Loading...";
+  generateQRBtn.style.display = "none";
 
   try {
     const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
@@ -119,8 +120,7 @@ async function searchData() {
       const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
       resultA.textContent = lines.join('\n');
 
-      resultBoxWrapper.style.display = "flex";
-      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya kalau result ada
+      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya kalau ada data
     } else {
       resultA.textContent = "No data found.";
     }
@@ -131,7 +131,6 @@ async function searchData() {
 
   currentQRText = input;
 }
-
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
