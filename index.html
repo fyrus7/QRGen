@@ -82,29 +82,43 @@
   const logoURL = "https://app.iamfyrus.com/media/qrgen.png";
 
   function searchData() {
-    const input = document.getElementById("numberInput").value.trim();
-    if (input === "") return;
+  const input = document.getElementById("numberInput").value.trim();
+  if (input === "") return;
 
-    fetch(`https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById("searchResultA").textContent = data.rowA;
-          document.getElementById("searchResultB").textContent = data.rowB;
-          document.getElementById("resultBox").style.display = "block";
-          document.getElementById("generateQRBtn").style.display = "inline-block";
-          currentQRText = input;
-        } else {
-          document.getElementById("searchResultA").textContent = "No data found.";
-          document.getElementById("searchResultB").textContent = "";
-          document.getElementById("generateQRBtn").style.display = "none";
-          document.getElementById("resultBox").style.display = "block";
-        }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-      });
-  }
+  fetch(`https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
+    .then(response => response.json())
+    .then(data => {
+      const resultA = document.getElementById("searchResultA");
+      const resultB = document.getElementById("searchResultB");
+      const resultBox = document.getElementById("resultBox");
+      const generateQRBtn = document.getElementById("generateQRBtn");
+
+      resultBox.style.display = "block";
+
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        let combinedA = "";
+        let combinedB = "";
+
+        data.data.forEach(entry => {
+          combinedA += entry.rowA + "\n";
+          combinedB += entry.rowB + "\n";
+        });
+
+        resultA.textContent = combinedA.trim();
+        resultB.textContent = combinedB.trim();
+        generateQRBtn.style.display = "inline-block";
+        currentQRText = combinedA.trim();
+      } else {
+        resultA.textContent = "No data found.";
+        resultB.textContent = "";
+        generateQRBtn.style.display = "none";
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    });
+}
+
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
