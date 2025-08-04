@@ -79,35 +79,41 @@
 <script>
   let currentQRText = "";
   const logoURL = "https://app.iamfyrus.com/media/qrgen.png";
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec";
 
-  function searchData() {
+  async function searchData() {
     const input = document.getElementById("numberInput").value.trim();
+    const resultA = document.getElementById("searchResultA");
+    const resultBox = document.getElementById("resultBox");
+    const generateQRBtn = document.getElementById("generateQRBtn");
+
     if (input === "") return;
 
-    fetch(`https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
-      .then(response => response.json())
-      .then(data => {
-        const resultA = document.getElementById("searchResultA");
-        const resultBox = document.getElementById("resultBox");
-        const generateQRBtn = document.getElementById("generateQRBtn");
+    resultA.textContent = "Loading...";
+    resultBox.style.display = "block";
 
-        resultBox.style.display = "block";
+    const icList = input.split(",").map(ic => ic.trim()).filter(ic => ic !== "");
+    const fetches = icList.map(ic =>
+      fetch(`${scriptURL}?ic=${ic}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            return `${data.rowA} / ${data.rowB}`;
+          } else {
+            return `${ic} / ❌`;
+          }
+        })
+        .catch(() => `${ic} / ❌`)
+    );
 
-        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          const combined = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
-          const combinedText = combined.join('\n');
+    const results = await Promise.all(fetches);
+    const resultText = results.join("\n");
 
-          resultA.textContent = combinedText;
-          generateQRBtn.style.display = "inline-block";
-          currentQRText = combinedText;
-        } else {
-          resultA.textContent = "No data found.";
-          generateQRBtn.style.display = "none";
-        }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-      });
+    resultA.textContent = resultText;
+    generateQRBtn.style.display = "inline-block";
+
+    // ✅ Only original input goes into QR
+    currentQRText = input;
   }
 
   function showQR() {
