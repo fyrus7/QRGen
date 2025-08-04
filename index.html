@@ -111,7 +111,7 @@ async function searchData() {
   resultBoxWrapper.style.display = "none"; // 🔴 Mula dengan sembunyi
   generateQRBtn.style.display = "none";    // 🔴 Juga sembunyi QR
 
-  resultA.textContent = "Loading...";
+  resultA.textContent = "Loading..."; // ✅ Papar loading
 
   try {
     const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
@@ -124,7 +124,7 @@ async function searchData() {
       resultBoxWrapper.style.display = "flex";     // ✅ Papar result box
       generateQRBtn.style.display = "inline-block"; // ✅ Tunjuk QR bila data valid
     } else {
-      resultA.textContent = "No data found.";
+      resultA.textContent = "No data found."; // ✅ Bila tiada data
     }
   } catch (error) {
     resultA.textContent = "Error fetching data.";
@@ -133,6 +133,7 @@ async function searchData() {
 
   currentQRText = input;
 }
+
 
 
 
