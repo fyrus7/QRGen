@@ -85,7 +85,7 @@
     const input = document.getElementById("numberInput").value.trim();
     if (input === "") return;
 
-    fetch(`https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
+    fetch(`https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
       .then(response => response.json())
       .then(data => {
         if (data.success) {
