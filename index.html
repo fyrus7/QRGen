@@ -25,11 +25,10 @@
       margin-top: 30px;
     }
     #resultBox {
-      background-color: #f1f1f1;
-      padding: 20px 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 0; /* remove padding */
       text-align: left;
+      background: none; /* remove background */
+      box-shadow: none; /* remove shadow */
     }
     #searchResultA {
       font-family: monospace;
@@ -60,16 +59,16 @@
         placeholder="key in your IC/ID"
       >
       <small class="text-muted">You may enter anything (letters, symbols, multiple IDs separated by commas)</small>
-      <button class="btn btn-success w-100 mt-3" onclick="searchData()">SEARCH</button>
+      <button class="btn btn-success mt-3" style="padding: 6px 20px; font-size: 14px; width: auto;" onclick="searchData()">SEARCH</button>
     </div>
   </div>
 </div>
 
-<!-- ✅ Search Result Box (Center-Left style) -->
+<!-- ✅ Search Result Box (centered) -->
 <div id="resultBoxWrapper" class="container" style="display: none;">
-  <div id="resultBox">
+  <div id="resultBox" class="text-center">
     <pre id="searchResultA" class="fw-bold"></pre>
-    <button id="generateQRBtn" class="btn btn-primary mt-2" onclick="showQR()" style="display:none;">GENERATE QR</button>
+    <button id="generateQRBtn" class="btn btn-primary mt-2 mx-auto d-block" onclick="showQR()" style="display:none;">GENERATE QR</button>
   </div>
 </div>
 
