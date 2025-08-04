@@ -100,37 +100,39 @@
   const logoURL = "https://app.iamfyrus.com/media/qrgen.png";
   const scriptURL = "https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec";
 
-  async function searchData() {
-    const input = document.getElementById("numberInput").value.trim();
-    const resultA = document.getElementById("searchResultA");
-    const resultBoxWrapper = document.getElementById("resultBoxWrapper");
-    const generateQRBtn = document.getElementById("generateQRBtn");
+async function searchData() {
+  const input = document.getElementById("numberInput").value.trim();
+  const resultA = document.getElementById("searchResultA");
+  const resultBoxWrapper = document.getElementById("resultBoxWrapper");
+  const generateQRBtn = document.getElementById("generateQRBtn");
 
-    if (input === "") return;
+  if (input === "") return;
 
-    resultA.textContent = "Loading...";
-    resultBoxWrapper.style.display = "flex";
+  resultA.textContent = "Loading...";
+  resultBoxWrapper.style.display = "flex";
+  generateQRBtn.style.display = "none"; // ⛔️ Hide QR button first
 
-    try {
-      const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
-      const data = await response.json();
+  try {
+    const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
+    const data = await response.json();
 
-      if (data.success && Array.isArray(data.data)) {
-        const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
-        resultA.textContent = lines.join('\n');
-        generateQRBtn.style.display = "inline-block";
-      } else {
-        resultA.textContent = "No data found.";
-        generateQRBtn.style.display = "none";
-      }
-    } catch (error) {
-      resultA.textContent = "Error fetching data.";
-      generateQRBtn.style.display = "none";
-      console.error("Fetch error:", error);
+    if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+      const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
+      resultA.textContent = lines.join('\n');
+      generateQRBtn.style.display = "inline-block"; // ✅ Show only if results exist
+    } else {
+      resultA.textContent = "No data found.";
+      generateQRBtn.style.display = "none"; // ⛔️ Ensure it's hidden
     }
-
-    currentQRText = input;
+  } catch (error) {
+    resultA.textContent = "Error fetching data.";
+    generateQRBtn.style.display = "none"; // ⛔️ Hide in case of error too
+    console.error("Fetch error:", error);
   }
+
+  currentQRText = input;
+}
+
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
