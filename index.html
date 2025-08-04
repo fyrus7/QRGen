@@ -17,6 +17,18 @@
       white-space: pre-wrap;
       text-align: left;
     }
+    #resultBoxWrapper {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      min-height: 200px;
+      padding-left: 5vw;
+    }
+    #searchResultA {
+      font-family: monospace;
+      font-size: 18px;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -44,9 +56,11 @@
       <button class="btn btn-success w-100 mt-3" onclick="searchData()">SEARCH</button>
     </div>
   </div>
+</div>
 
-  <!-- Search Result Box -->
-  <div id="resultBox" class="text-center mt-4" style="display: none;">
+<!-- ✅ Search Result Box (Center-Left style) -->
+<div id="resultBoxWrapper" class="container" style="display: none;">
+  <div id="resultBox">
     <pre id="searchResultA" class="fw-bold"></pre>
     <button id="generateQRBtn" class="btn btn-primary mt-2" onclick="showQR()" style="display:none;">GENERATE QR</button>
   </div>
@@ -82,39 +96,36 @@
   const scriptURL = "https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec";
 
   async function searchData() {
-  const input = document.getElementById("numberInput").value.trim();
-  const resultA = document.getElementById("searchResultA");
-  const resultBox = document.getElementById("resultBox");
-  const generateQRBtn = document.getElementById("generateQRBtn");
+    const input = document.getElementById("numberInput").value.trim();
+    const resultA = document.getElementById("searchResultA");
+    const resultBoxWrapper = document.getElementById("resultBoxWrapper");
+    const generateQRBtn = document.getElementById("generateQRBtn");
 
-  if (input === "") return;
+    if (input === "") return;
 
-  resultA.textContent = "Loading...";
-  resultBox.style.display = "block";
+    resultA.textContent = "Loading...";
+    resultBoxWrapper.style.display = "flex";
 
-  // Hantar semua IC sekaligus
-  try {
-    const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
-    const data = await response.json();
+    try {
+      const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
+      const data = await response.json();
 
-    if (data.success && Array.isArray(data.data)) {
-      const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
-      resultA.textContent = lines.join('\n');
-      generateQRBtn.style.display = "inline-block";
-    } else {
-      resultA.textContent = "No data found.";
+      if (data.success && Array.isArray(data.data)) {
+        const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
+        resultA.textContent = lines.join('\n');
+        generateQRBtn.style.display = "inline-block";
+      } else {
+        resultA.textContent = "No data found.";
+        generateQRBtn.style.display = "none";
+      }
+    } catch (error) {
+      resultA.textContent = "Error fetching data.";
       generateQRBtn.style.display = "none";
+      console.error("Fetch error:", error);
     }
-  } catch (error) {
-    resultA.textContent = "Error fetching data.";
-    generateQRBtn.style.display = "none";
-    console.error("Fetch error:", error);
+
+    currentQRText = input;
   }
-
-  // QR hanya berdasarkan input asal
-  currentQRText = input;
-}
-
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
@@ -173,7 +184,7 @@
 
   document.getElementById("qrModal").addEventListener("hidden.bs.modal", function () {
     document.getElementById("numberInput").value = "";
-    document.getElementById("resultBox").style.display = "none";
+    document.getElementById("resultBoxWrapper").style.display = "none";
     document.getElementById("generateQRBtn").style.display = "none";
   });
 </script>
