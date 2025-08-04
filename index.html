@@ -119,20 +119,19 @@ async function searchData() {
       const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
       resultA.textContent = lines.join('\n');
 
-      resultBoxWrapper.style.display = "flex";        // ✅ Papar result
-      generateQRBtn.style.display = "inline-block";   // ✅ Hanya tunjuk kalau ada data
+      resultBoxWrapper.style.display = "flex";
+      generateQRBtn.style.display = "inline-block"; // ✅ Muncul hanya kalau result ada
     } else {
       resultA.textContent = "No data found.";
-      generateQRBtn.style.display = "none";           // 🔴 Pastikan butang QR tetap sembunyi
     }
   } catch (error) {
     resultA.textContent = "Error fetching data.";
     console.error("Fetch error:", error);
-    generateQRBtn.style.display = "none";             // 🔴 Juga sembunyi jika error
   }
 
   currentQRText = input;
 }
+
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
