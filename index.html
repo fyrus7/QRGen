@@ -13,17 +13,17 @@
     #qrText {
       word-break: break-word;
     }
+    pre {
+      white-space: pre-wrap;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
 
 <!-- ✅ Logo Header -->
 <div style="text-align: center;">
- <img 
-    src="https://app.iamfyrus.com/media/qrgen.png" 
-    alt="Header Logo" 
-    style="width: 350px; height: auto;"
-  >
+  <img src="https://app.iamfyrus.com/media/qrgen.png" alt="Header Logo" style="width: 350px; height: auto;">
 </div>
 <br>
 <center>
@@ -47,9 +47,8 @@
 
   <!-- Search Result Box -->
   <div id="resultBox" class="text-center mt-4" style="display: none;">
-    <div id="searchResultA" class="fw-bold"></div>
-    <div id="searchResultB" class="text-muted mb-3"></div>
-    <button id="generateQRBtn" class="btn btn-primary" onclick="showQR()" style="display:none;">GENERATE QR</button>
+    <pre id="searchResultA" class="fw-bold"></pre>
+    <button id="generateQRBtn" class="btn btn-primary mt-2" onclick="showQR()" style="display:none;">GENERATE QR</button>
   </div>
 </div>
 
@@ -82,43 +81,34 @@
   const logoURL = "https://app.iamfyrus.com/media/qrgen.png";
 
   function searchData() {
-  const input = document.getElementById("numberInput").value.trim();
-  if (input === "") return;
+    const input = document.getElementById("numberInput").value.trim();
+    if (input === "") return;
 
-  fetch(`https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
-    .then(response => response.json())
-    .then(data => {
-      const resultA = document.getElementById("searchResultA");
-      const resultB = document.getElementById("searchResultB");
-      const resultBox = document.getElementById("resultBox");
-      const generateQRBtn = document.getElementById("generateQRBtn");
+    fetch(`https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec?ic=${encodeURIComponent(input)}`)
+      .then(response => response.json())
+      .then(data => {
+        const resultA = document.getElementById("searchResultA");
+        const resultBox = document.getElementById("resultBox");
+        const generateQRBtn = document.getElementById("generateQRBtn");
 
-      resultBox.style.display = "block";
+        resultBox.style.display = "block";
 
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        let combinedA = "";
-        let combinedB = "";
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const combined = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
+          const combinedText = combined.join('\n');
 
-        data.data.forEach(entry => {
-          combinedA += entry.rowA + "\n";
-          combinedB += entry.rowB + "\n";
-        });
-
-        resultA.textContent = combinedA.trim();
-        resultB.textContent = combinedB.trim();
-        generateQRBtn.style.display = "inline-block";
-        currentQRText = combinedA.trim();
-      } else {
-        resultA.textContent = "No data found.";
-        resultB.textContent = "";
-        generateQRBtn.style.display = "none";
-      }
-    })
-    .catch(error => {
-      console.error("Error:", error);
-    });
-}
-
+          resultA.textContent = combinedText;
+          generateQRBtn.style.display = "inline-block";
+          currentQRText = combinedText;
+        } else {
+          resultA.textContent = "No data found.";
+          generateQRBtn.style.display = "none";
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      });
+  }
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
