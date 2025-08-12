@@ -51,7 +51,8 @@
         id="numberInput" 
         class="form-control mb-2" 
         placeholder="key in your IC/ID"
-      >
+        oninput="this.value = this.value.replace(/[^0-9,]/g, '');"
+      />
       <button class="btn btn-success w-100 mt-3" onclick="searchData()">SEARCH</button>
     </div>
   </div>
