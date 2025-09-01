@@ -95,7 +95,11 @@
   const logoURL = "https://app.iamfyrus.com/media/qrgen.png";
   const scriptURL = "https://script.google.com/macros/s/AKfycbwjxccHTvGMmg-QAgRDepBlpkzmAIJp9FQiFXtGAsM9mta-Pek-qc-k7Mt_gp1WElyLOA/exec";
 
+  let universalMode = false; // default OFF
+
   async function searchData() {
+    if (universalMode) return; // 🚫 kalau universal mode, tak payah search
+
     const input = document.getElementById("numberInput").value.trim();
     const resultA = document.getElementById("searchResultA");
     const resultBoxWrapper = document.getElementById("resultBoxWrapper");
@@ -105,27 +109,47 @@
 
     resultA.textContent = "Loading...";
     resultBoxWrapper.style.display = "flex";
+    generateQRBtn.style.display = "none";
 
     try {
       const response = await fetch(`${scriptURL}?ic=${encodeURIComponent(input)}`);
       const data = await response.json();
 
-      if (data.success && Array.isArray(data.data)) {
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
         const lines = data.data.map(entry => `${entry.rowA} / ${entry.rowB}`);
         resultA.textContent = lines.join('\n');
         generateQRBtn.style.display = "inline-block";
       } else {
         resultA.textContent = "No data found.";
-        generateQRBtn.style.display = "none";
       }
     } catch (error) {
       resultA.textContent = "Error fetching data.";
-      generateQRBtn.style.display = "none";
       console.error("Fetch error:", error);
     }
 
     currentQRText = input;
   }
+
+  // ✅ Universal mode update setiap kali taip
+  document.getElementById("numberInput").addEventListener("input", function () {
+    if (universalMode) {
+      const input = this.value.trim();
+      const resultBoxWrapper = document.getElementById("resultBoxWrapper");
+      const resultA = document.getElementById("searchResultA");
+      const generateQRBtn = document.getElementById("generateQRBtn");
+
+      currentQRText = input;
+
+      if (input !== "") {
+        resultBoxWrapper.style.display = "flex";
+        resultA.textContent = "(Universal mode: direct QR)";
+        generateQRBtn.style.display = "inline-block";
+      } else {
+        resultBoxWrapper.style.display = "none";
+        generateQRBtn.style.display = "none";
+      }
+    }
+  });
 
   function showQR() {
     const canvas = document.getElementById("qrCanvas");
@@ -188,7 +212,7 @@
     document.getElementById("generateQRBtn").style.display = "none";
   });
 
-  // 🔒 Hidden Toggle (5x tap logo to unlock universal mode)
+  // 🔒 Hidden Toggle (5x tap logo)
   let tapCount = 0;
   let tapTimeout;
   const headerLogo = document.getElementById("headerLogo");
@@ -197,12 +221,22 @@
   headerLogo.addEventListener("click", () => {
     tapCount++;
     clearTimeout(tapTimeout);
-    tapTimeout = setTimeout(() => { tapCount = 0; }, 1000); // reset after 1s
+    tapTimeout = setTimeout(() => { tapCount = 0; }, 1000);
 
     if (tapCount >= 5) {
       tapCount = 0;
-      numberInput.removeAttribute("oninput");
-      numberInput.placeholder = "universal mode is enabled";
+      universalMode = !universalMode; // toggle ON/OFF
+
+      if (universalMode) {
+        numberInput.placeholder = "universal mode is enabled";
+      } else {
+        numberInput.placeholder = "key in your IC/ID";
+      }
+
+      // reset UI bila tukar mode
+      document.getElementById("resultBoxWrapper").style.display = "none";
+      document.getElementById("searchResultA").textContent = "";
+      document.getElementById("generateQRBtn").style.display = "none";
     }
   });
 </script>
