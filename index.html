@@ -35,7 +35,7 @@
 
 <!-- ✅ Logo Header -->
 <div style="text-align: center;">
-  <img src="https://app.iamfyrus.com/media/qrgen.png" alt="Header Logo" style="width: 350px; height: auto;">
+  <img id="headerLogo" src="https://app.iamfyrus.com/media/qrgen.png" alt="Header Logo" style="width: 350px; height: auto; cursor: pointer;">
 </div>
 <br>
 <center>
@@ -186,6 +186,24 @@
     document.getElementById("numberInput").value = "";
     document.getElementById("resultBoxWrapper").style.display = "none";
     document.getElementById("generateQRBtn").style.display = "none";
+  });
+
+  // 🔒 Hidden Toggle (5x tap logo to unlock universal mode)
+  let tapCount = 0;
+  let tapTimeout;
+  const headerLogo = document.getElementById("headerLogo");
+  const numberInput = document.getElementById("numberInput");
+
+  headerLogo.addEventListener("click", () => {
+    tapCount++;
+    clearTimeout(tapTimeout);
+    tapTimeout = setTimeout(() => { tapCount = 0; }, 1000); // reset after 1s
+
+    if (tapCount >= 5) {
+      tapCount = 0;
+      numberInput.removeAttribute("oninput");
+      numberInput.placeholder = "universal mode is enabled";
+    }
   });
 </script>
 
