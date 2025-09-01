@@ -212,33 +212,35 @@
     document.getElementById("generateQRBtn").style.display = "none";
   });
 
-  // 🔒 Hidden Toggle (5x tap logo)
-  let tapCount = 0;
-  let tapTimeout;
-  const headerLogo = document.getElementById("headerLogo");
-  const numberInput = document.getElementById("numberInput");
+// 🔒 Hidden Toggle (5x tap logo)
+let tapCount = 0;
+let tapTimeout;
+const headerLogo = document.getElementById("headerLogo");
+const numberInput = document.getElementById("numberInput");
 
-  headerLogo.addEventListener("click", () => {
-    tapCount++;
-    clearTimeout(tapTimeout);
-    tapTimeout = setTimeout(() => { tapCount = 0; }, 1000);
+headerLogo.addEventListener("click", () => {
+  tapCount++;
+  clearTimeout(tapTimeout);
+  tapTimeout = setTimeout(() => { tapCount = 0; }, 1000);
 
-    if (tapCount >= 5) {
-      tapCount = 0;
-      universalMode = !universalMode; // toggle ON/OFF
+  if (tapCount >= 5) {
+    tapCount = 0;
+    universalMode = !universalMode; // toggle ON/OFF
 
-      if (universalMode) {
-        numberInput.placeholder = "universal mode is enabled";
-      } else {
-        numberInput.placeholder = "key in your IC/ID";
-      }
-
-      // reset UI bila tukar mode
-      document.getElementById("resultBoxWrapper").style.display = "none";
-      document.getElementById("searchResultA").textContent = "";
-      document.getElementById("generateQRBtn").style.display = "none";
+    if (universalMode) {
+      numberInput.removeAttribute("oninput"); // ❌ buang restriction
+      numberInput.placeholder = "universal mode is enabled";
+    } else {
+      numberInput.setAttribute("oninput", "this.value = this.value.replace(/[^0-9, ]/g, '');"); // ✅ restore restriction
+      numberInput.placeholder = "key in your IC/ID";
     }
-  });
+
+    // reset UI bila tukar mode
+    document.getElementById("resultBoxWrapper").style.display = "none";
+    document.getElementById("searchResultA").textContent = "";
+    document.getElementById("generateQRBtn").style.display = "none";
+  }
+});
 </script>
 
 </body>
