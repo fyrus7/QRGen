@@ -170,7 +170,7 @@
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
+//      ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight); // enable to show logo
 
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = 300;
@@ -182,7 +182,8 @@
           return;
         }
 
-        ctx.drawImage(tempCanvas, 0, logoHeight);
+//        ctx.drawImage(tempCanvas, 0, logoHeight); // enable to show logo
+        ctx.drawImage(tempCanvas, 0, 0); // enable to hide logo
 
         ctx.font = "bold 14px Arial";
         ctx.fillStyle = "#000";
